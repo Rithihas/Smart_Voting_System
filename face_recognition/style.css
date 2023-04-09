@@ -1,0 +1,34 @@
+.facerecog{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100%;
+
+
+}
+
+.video-wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.canvas-wrap{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    row-gap: 20px;
+}
+
+.buttons{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 25px;
+}
+

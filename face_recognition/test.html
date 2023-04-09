@@ -1,0 +1,61 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>testdriver</title>
+    
+    <!-- javascript file link -->
+    <script src="jsdriverscript.js"></script>
+    
+    <!-- basic css style sheet link -->
+    <link href="style.css" rel="stylesheet">
+
+</head>
+<body>
+
+    
+
+    <!-- driver code for login -->
+    <div class="details" id="det">
+        username:<input type = "text" name = "user" id="username">
+        password:<input type = "password" name = "pass" id="password">
+        <!-- this button is for starting the video stream -->
+        <button id="cap" onclick="onCap()">capture</button>
+    </div>
+    
+
+    <!-- container for face recognition utilities -->
+    <div class = "facerecog" id="facerec">
+
+    <!-- container for streaming video captured through the camera     -->
+    <div class="video-wrap" id="vid" style="display: none;">
+        <video id="video">video stream not available.</video>
+        <!-- this button is for capturing our photo from the video to the canvas -->
+        <button id="snap" onclick="takePicture()">take picture</button>
+    </div>
+
+
+    
+    <!-- container for capturing and displaying photo taken from the video stream -->
+    <div class="canvas-wrap" id="can" style="display: none;">
+        <canvas id="canvas" ></canvas>
+        <div class="buttons">
+            <!-- this button is for taking the photo again -->
+        <input type="button" value="re-take photo" onclick="onCap()">
+        <!-- this button is for sending the taken photo for validation  -->
+        <input type="button" value="validate photo" onclick="validatePhoto()">
+        <!-- test button for storing in database -->
+        <input type="button" value="store in database" onclick="storeDB()">
+        </div>
+        <!-- for displaying output during development -->
+        <p id="inform"></p>
+
+        <!-- hidden tag used for storing the base64 string of our image -->
+        <p id="base64encoded" hidden></p>
+    </div>
+
+</div>
+
+</body>
+</html>
