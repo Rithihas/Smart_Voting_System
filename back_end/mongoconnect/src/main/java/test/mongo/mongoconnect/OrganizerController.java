@@ -35,6 +35,11 @@ public class OrganizerController {
     @PostMapping("/organizers")
     Organizer newOrganizer(@RequestBody Organizer newOrganizer)
     {
+        if(repository.findById(newOrganizer.getUsername()).isPresent())
+        {
+            return null;
+        }
+        else 
         return repository.save(newOrganizer);
     }
 

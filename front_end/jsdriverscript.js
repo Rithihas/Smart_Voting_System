@@ -3,12 +3,15 @@
 // global variable used to stop the usage of camera once we take the photo
 var localstream;
 
+// for knowing whether this page is being used by voter or organizer
+var prefix='v';
+
 
 function validatePhoto(){
 
 //extracting input values from input tags  
-var username = document.getElementById('username').value;
-var password = document.getElementById('password').value;
+var username = document.getElementById(prefix+'username').value;
+var password = document.getElementById(prefix+'password').value;
 
 // retrieving bae64 encoded string from hidden tag
 var photo_string = document.getElementById('base64encoded').innerHTML;
@@ -57,62 +60,62 @@ const obj = [
 
 const width = 320;    // We will scale the photo width to this
 const height = 320;     // photo height
-function onCap1(){
-  {
+// function onCap1(){
+//   {
    
-    document.getElementById('det').style.display = "none"; 
-    document.getElementById('can').style.display = "none";
-    document.getElementById('vid').style.display = "flex";
+//     document.getElementById('det').style.display = "none"; 
+//     document.getElementById('can').style.display = "none";
+//     document.getElementById('vid').style.display = "flex";
  
- let streaming = false;
+//  let streaming = false;
  
- // all the variables required
- let video = null;
- let canvas = null;
- let photo = null;
- let startbutton = null;
- var info = "this is info";
+//  // all the variables required
+//  let video = null;
+//  let canvas = null;
+//  let photo = null;
+//  let startbutton = null;
+//  var info = "this is info";
  
  
  
-   // linking the variables to the html tags
-   video = document.getElementById('video');
-   canvas = document.getElementById('canvas');
-   photo = document.getElementById('photo');
-   startbutton = document.getElementById('snap');
+//    // linking the variables to the html tags
+//    video = document.getElementById('video');
+//    canvas = document.getElementById('canvas');
+//    photo = document.getElementById('photo');
+//    startbutton = document.getElementById('snap');
  
-   // provides access to media devices
-   navigator.mediaDevices
-   .getUserMedia({ video: true, audio: false })
-   .then((stream) => {
-     localstream = stream;       // video stream object from our webcam
-     video.srcObject = stream;   // video.srcObject refers to the source of the media for the video tag. in this case, the source is the stream from our webcam.
-     video.play();               // starts playing the video.
-   })
-   .catch((err) => {
-     console.error(`An error occurred: ${err}`);
-   });
+//    // provides access to media devices
+//    navigator.mediaDevices
+//    .getUserMedia({ video: true, audio: false })
+//    .then((stream) => {
+//      localstream = stream;       // video stream object from our webcam
+//      video.srcObject = stream;   // video.srcObject refers to the source of the media for the video tag. in this case, the source is the stream from our webcam.
+//      video.play();               // starts playing the video.
+//    })
+//    .catch((err) => {
+//      console.error(`An error occurred: ${err}`);
+//    });
  
-   video.addEventListener(
-     "canplay",       //The canplay event occurs when the browser can start playing the specified audio/video (when it has buffered enough to begin).
-     (ev) => {
+//    video.addEventListener(
+//      "canplay",       //The canplay event occurs when the browser can start playing the specified audio/video (when it has buffered enough to begin).
+//      (ev) => {
  
-         //setting the height and width of our video
-         video.setAttribute("width", width);
-         video.setAttribute("height", height);
-         canvas.setAttribute("width", width);
-         canvas.setAttribute("height", height);
-         streaming = true;
+//          //setting the height and width of our video
+//          video.setAttribute("width", width);
+//          video.setAttribute("height", height);
+//          canvas.setAttribute("width", width);
+//          canvas.setAttribute("height", height);
+//          streaming = true;
        
-     },
-     false
-   );
-   }
-}
+//      },
+//      false
+//    );
+//    }
+// }
 
   function onCap() {
-    var username = document.getElementById('username').value;
-var password = document.getElementById('password').value;
+    var username = document.getElementById(prefix+'username').value;
+var password = document.getElementById(prefix+'password').value;
 if(username==="")
 alert("please enter username");
 else if(password=='')
@@ -206,24 +209,27 @@ function takePicture() {
 function storeDB(){
 
   //extracting input values from input tags  
-var username = document.getElementById('username').value;
-var password = document.getElementById('password').value;
+var name = document.getElementById(prefix+'username').value;
+var pass = document.getElementById(prefix+'password').value;
 
 // retrieving bae64 encoded string from hidden tag
-var photo_string = document.getElementById('base64encoded').innerHTML;
+var photo = document.getElementById('base64encoded').innerHTML;
 
 //for displaying output during development
-document.getElementById('inform').innerHTML = "storing in server....";
+//document.getElementById('inform').innerHTML = "storing in server....";
 
 
 //creating javascript object , to POST/send to the python code running on the flask server
-const obj = [
-  { "user":username , "pass":password , "photo":photo_string}
- ];
+const obj = {
+  username  : name ,
+  password  : pass ,
+  photoString : photo
+}
 
 
  // this is the fetch API. it is promise based.it allows us to fetch resources and also manipulate request/responses.
- fetch("http://127.0.0.1:5000/insert",  // link to the server
+ if(prefix == 'o') {
+ fetch("http://localhost:3128/organizers",  // link to the server
  {
  method: 'POST',   // since we are sending an object
  headers: {
@@ -236,18 +242,119 @@ const obj = [
  return res.json()       // this value is returned to the next "then"
  }
  else{
- alert("something is wrong")
+ alert("Username already exists.")
  }
  }).then(jsonResponse=>{
  
  
  console.log(jsonResponse)
- document.getElementById('inform').innerHTML = "validation result: "+jsonResponse["fresult"];
 
 
 
+ 
  } 
- ).catch((err) => console.error(err));
+ ).catch((err) => console.log("User already exists."));
+
+}
+
+else
+
+{
+
+  fetch("http://localhost:3128/voters",  // link to the server
+  {
+  method: 'POST',   // since we are sending an object
+  headers: {
+  'Content-type': 'application/json',  // specifies that we are sending a json object.
+  'Accept': 'application/json'         // ensures that we recieve a json object.
+  },
+  
+  body:JSON.stringify(obj)}).then(res=>{       //body specifies the object we are sending
+  if(res.ok){             // res.ok is true if response returned successfully
+  return res.json()       // this value is returned to the next "then"
+  }
+  else{
+  alert("something is wrong")
+  }
+  }).then(jsonResponse=>{
+  
+  
+  console.log(jsonResponse)
+  
+  } 
+  ).catch((err) => console.error(err));
 
 
 }
+
+
+}
+
+
+// function validate()
+// {
+//     let username=document.getElementById(prefix+"username").value;
+//     let password=document.getElementById(prefix+"password").value;
+//     let confirmpassword=document.getElementById(prefix+"cpassword").value;
+//     let usernamechecker=/^[A-Z]{1}[a-z]{5,9}@[0-9]{3}$/;
+//     let passwordchecker=/^[A-Za-z]{5,11}@[0-9]{2,8}$/;
+//     if(!usernamechecker.test(username))
+//     {
+//       document.getElementById("usererror").style.display="block";
+//       document.getElementById("usererror").innerHTML="username cannot contain special characters.";
+      
+//     }
+//     else
+//     {
+//         document.getElementById("usererror").style.display="none";
+//     }
+//      if(!passwordchecker.test(password)&&usernamechecker.test(username))
+//     {
+//       document.getElementById("passworderror").innerHTML="Invalid password";
+      
+//     }
+//     else{
+//         document.getElementById("passworderror").innerHTML="";
+//     }
+//     if(passwordchecker.test(password)&&usernamechecker.test(username)&&password!==confirmpassword)
+//     {
+//       document.getElementById("mismatchingerror").innerHTML="Mismatching of password";
+      
+//     }
+//     else{
+//         document.getElementById("mismatchingerror").innerHTML="";
+//     }
+// }
+
+// function reload()
+// {
+
+//     document.getElementById("username").value="";
+//     document.getElementById("password").value="";
+//     document.getElementById("confirmpassword").value="";
+
+
+// }
+
+
+
+
+function voterLogin(){
+  prefix = 'v';
+    var x=document.getElementById("voter");
+    var y=document.getElementById("organiser");
+    var z=document.getElementById("btn");
+    y.style.display='none';
+    x.style.display="inherit";
+    z.style.left="0px";
+   }
+
+function organiserLogin(){
+  prefix = 'o';
+    var x=document.getElementById("voter");
+    var y=document.getElementById("organiser");
+    var z=document.getElementById("btn");
+    x.style.display="none";
+    y.style.display="inherit";
+    z.style.left="45%";
+   }

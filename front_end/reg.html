@@ -28,7 +28,7 @@
     <img class="wave" src="wavedup2.png">
 	<div class="container">
 		<div class="img">
-			<img src="imgdup.svg " style="height: 550px;width: 550px;">
+			<img src="bgimgdup.svg " style="height: 550px;width: 550px;">
 		</div>
 		<div class="login-content" id="det">
 			<div class="form">
@@ -48,8 +48,10 @@
            		   </div>
            		   <div class="div">
            		   		<h5>Username</h5>
-           		   		<input type="text" id="username" class="input">
+           		   		<input type="text" id="vusername" class="input">
+                        
            		   </div>
+                      <p id="usererror" style="display:none;"></p>
            		</div>
            		<div class="input-div pass">
            		   <div class="i"> 
@@ -57,7 +59,7 @@
            		   </div>
            		   <div class="div">
            		    	<h5>set Password</h5>
-           		    	<input type="password" id="password" class="input">
+           		    	<input type="password" id="vpassword" class="input">
             	   </div>
             	</div>
                 <div class="input-div pass">
@@ -66,11 +68,11 @@
                     </div>
                     <div class="div">
                          <h5>confirm Password</h5>
-                         <input type="password" id="password" class="input">
+                         <input type="password" id="vcpassword" class="input">
                  </div>
               </div>
             	<a href="#">Forgot Password?</a>
-            	<button id="cap" class="btn" onclick="onCap()">capture</button>
+            	<button id="cap" class="btn" onclick="onCap()">create account</button>
                 </div>
                 </div>
                 <div id="organiser">
@@ -82,7 +84,7 @@
                           </div>
                           <div class="div">
                                   <h5>Username</h5>
-                                  <input type="text" id="username" class="input" required>
+                                  <input type="text" id="ousername" class="input" required>
                           </div>
                        </div>
                        <div class="input-div pass">
@@ -91,7 +93,7 @@
                           </div>
                           <div class="div">
                                <h5>Password</h5>
-                               <input type="password" id="password" class="input" required>
+                               <input type="password" id="opassword" class="input" required>
                        </div>
                     </div>
                     <div class="input-div pass">
@@ -100,11 +102,11 @@
                         </div>
                         <div class="div">
                              <h5>Password</h5>
-                             <input type="password" id="password" class="input" required>
+                             <input type="password" id="ocpassword" class="input" required>
                      </div>
                   </div>
                     <a href="#">Forgot Password?</a>
-                    <button id="cap" class="btn" onclick="onCap1()">capture</button>
+                    <button id="cap" class="btn" onclick="onCap()">create account</button>
                    
 				</div>
                 </div>
@@ -136,7 +138,7 @@
                         <!-- this button is for taking the photo again -->
                     <input type="button" class="btn" value="retake" onclick="onCap()" required>
                     <!-- this button is for sending the taken photo for validation  -->
-                 <input type="button"class="btn" value="confirm" onclick="validatePhoto()" required>
+                 <input type="button"class="btn" value="confirm" onclick="storeDB()" required>
                     <!-- test button for storing in database -->
                     <!--<input type="button" value="store in database" onclick="storeDB()">-->
                     </div>
@@ -151,7 +153,7 @@
 
 </div>
 
-<script>
+<!-- <script>
     var x=document.getElementById("voter");
     var y=document.getElementById("organiser");
     var z=document.getElementById("btn");
@@ -166,6 +168,6 @@
     z.style.left="45%";
    }
 
-</script>
+</script> -->
 </body>
 </html>
