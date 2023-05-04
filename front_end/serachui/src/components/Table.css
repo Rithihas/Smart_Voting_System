@@ -1,0 +1,25 @@
+:root{
+    --bg:#000000 ;
+    --fg:#C69749;
+    --hv:#C69749;
+    
+    
+    /*000000              C69749*/}
+    .a{
+        color:var(--fg)
+        ;
+        border: none;
+        outline: none;
+    }
+    body{
+        background-color: var(--bg);
+        color: var(--fg);
+    }
+    .th{
+        color:#a96903;
+        font-style: italic;
+        text-align: center;
+    }
+    table{
+        padding-left: 6%;
+    }
