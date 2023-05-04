@@ -25,16 +25,19 @@ def validateFace():
     # data = jsonify(data)
 
     
-    #connecting to mongo DB databse        
-    client = MongoClient("mongodb+srv://rithihas:votingsmart@smartvoting.xgicig5.mongodb.net/?retryWrites=true&w=majority")
+    #connecting to mongo DB database  
+    # mongodb+srv://rithihas:votingsmart@smartvoting.xgicig5.mongodb.net/?retryWrites=true&w=majority      
+    client = MongoClient("mongodb://localhost/") #connecting to local mongoDB database
  
-    dbname = client["smartvoting"] 
+    dbname = client["SmartVote"] 
 
-    cname = dbname["voters"] #getting required collection
-
+    if data[0]["collection"] == "organizer":
+        cname = dbname["Organizers"] #getting required collection
+    else:
+        cname = dbname["Voters"] #getting required collection
     # print(data)
     
-    retrieved = cname.find_one({"username" : data[0]["user"]}) #retrieving record from collection
+    retrieved = cname.find_one({"_id" : data[0]["user"]}) #retrieving record from collection
      
     decode = base64.b64decode(retrieved['photo'])  # decoding base64 string retrieved from database
 
