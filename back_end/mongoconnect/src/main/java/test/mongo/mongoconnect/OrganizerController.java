@@ -22,6 +22,20 @@ public class OrganizerController {
         this.repository = repository;
     }
 
+    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @GetMapping("/organizers/verifyuser/{username}")
+     String verifyUser(@PathVariable String username)
+    {
+        if(repository.findById(username).isPresent()) {
+         System.out.println(username);
+            return "{\"UserPresent\" : \"true\"}";
+
+        }
+        else 
+        return "{\"UserPresent\" : \"false\"}";
+    }
+
+
 
     // returns all items
     @CrossOrigin(origins = "http://127.0.0.1:5500/")

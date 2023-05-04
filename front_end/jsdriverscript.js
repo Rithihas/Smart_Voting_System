@@ -113,13 +113,107 @@ const height = 320;     // photo height
 //    }
 // }
 
-  function onCap() {
+
+function verifyUsername()
+{
+  var name = document.getElementById(prefix+'username').value;
+
+
+  if(name==="")
+alert("please enter username");
+
+else {
+
+
+ // this is the fetch API. it is promise based.it allows us to fetch resources and also manipulate request/responses.
+ if(prefix == 'o') {
+ fetch("http://localhost:3128/organizers/verifyuser/"+name,  // link to the server
+ {
+ method: 'GET',   // since we are sending an object
+ headers: {
+   // specifies that we are sending a json object.
+ 'Accept': 'application/json'         // ensures that we recieve a json object.
+ }
+
+}).then(res=>{       //body specifies the object we are sending
+ if(res.ok){             // res.ok is true if response returned successfully
+
+ return res.json()       // this value is returned to the next "then"
+ }
+ else{
+ alert("Something went wrong.")
+ }
+ }).then(jsonResponse=>{
+ 
+ 
+ if(jsonResponse.UserPresent == "true")
+ alert("Username already taken.");
+ else 
+ onCap();
+
+
+
+
+ 
+ } 
+ ).catch((err) => console.log("Internal server error. "+err));
+
+
+}
+
+else
+
+{
+
+  fetch("http://localhost:3128/voters/verifyuser/"+name,  // link to the server
+ {
+ method: 'GET',   // since we are sending an object
+ headers: {
+   // specifies that we are sending a json object.
+ 'Accept': 'application/json'         // ensures that we recieve a json object.
+ }
+
+}).then(res=>{       //body specifies the object we are sending
+ if(res.ok){             // res.ok is true if response returned successfully
+ return res.json()       // this value is returned to the next "then"
+ }
+ else{
+ alert("Something went wrong.")
+ }
+ }).then(jsonResponse=>{
+ 
+ 
+ if(jsonResponse.UserPresent == "true")
+ alert("Username taken.");
+ else 
+ onCap();
+
+
+
+
+ 
+ } 
+ ).catch((err) => console.log("Internal server error."));
+
+
+}
+
+}
+
+}
+
+
+function onCap() {
     var username = document.getElementById(prefix+'username').value;
 var password = document.getElementById(prefix+'password').value;
+var cpassword = document.getElementById(prefix+'cpassword').value;
+
 if(username==="")
 alert("please enter username");
 else if(password=='')
 alert("please enter valid password");
+else if(password != cpassword)
+alert("password does not match.");
 else{
    
    document.getElementById('det').style.display = "none"; 
@@ -219,7 +313,7 @@ var photo = document.getElementById('base64encoded').innerHTML;
 //document.getElementById('inform').innerHTML = "storing in server....";
 
 
-//creating javascript object , to POST/send to the python code running on the flask server
+//creating javascript object , to POST/send to the Spring REST API 
 const obj = {
   username  : name ,
   password  : pass ,
