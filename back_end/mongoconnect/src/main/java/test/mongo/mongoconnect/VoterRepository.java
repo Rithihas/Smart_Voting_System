@@ -1,8 +1,8 @@
-package example.voterbackend;
+package test.mongo.mongoconnect;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import example.voterbackend.Voter;
+
 
 public interface VoterRepository extends MongoRepository<Voter, String> {
 

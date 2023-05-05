@@ -184,7 +184,7 @@ else
  
  
  if(jsonResponse.UserPresent == "true")
- alert("Username taken.");
+ alert("Username already taken.");
  else 
  onCap();
 
@@ -193,7 +193,7 @@ else
 
  
  } 
- ).catch((err) => console.log("Internal server error."));
+ ).catch((err) => console.log("Internal server error. "+err));
 
 
 }
