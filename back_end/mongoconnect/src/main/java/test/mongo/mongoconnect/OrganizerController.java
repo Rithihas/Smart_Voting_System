@@ -1,7 +1,11 @@
 package test.mongo.mongoconnect;
 
+import java.security.SecureRandom;
+
 import java.util.List;
 
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
+
 @RestController
 public class OrganizerController {
+
+
     
     private final OrganizerRepository repository;
                                                        
@@ -22,7 +29,46 @@ public class OrganizerController {
         this.repository = repository;
     }
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
+    @GetMapping("/organizers/generatetoken/{username}")
+     String generateToken(@PathVariable String username)
+    {
+        Organizer x = repository.findById(username).get();
+
+        String plainPassword = x.getPassword();
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+        String encodedPassword = bCryptPasswordEncoder.encode(plainPassword);
+
+        
+
+        return "{\"sessionID\" : "+"\""+encodedPassword+"\""+" }";
+       
+
+    }
+
+    @CrossOrigin
+    @PostMapping("/organizers/validatetoken/{username}")
+     String validateToken(@RequestBody Token token,@PathVariable String username)
+    {
+        
+
+        String plainPassword = repository.findById(username).get().getPassword();
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+     
+
+        if(bCryptPasswordEncoder.matches(plainPassword,token.getSessionID()))
+        return "{\"authorized\" : \"true\"}";
+        else 
+        return "{\"authorized\" : \"false\"}";
+       
+
+    }
+
+
+
+    @CrossOrigin
     @GetMapping("/organizers/verifyuser/{username}")
      String verifyUser(@PathVariable String username)
     {
@@ -35,17 +81,36 @@ public class OrganizerController {
         return "{\"UserPresent\" : \"false\"}";
     }
 
+    @CrossOrigin
+    @GetMapping("/organizers/validateLogin/{username}/{password}")
+     String validateLogin(@PathVariable String username , @PathVariable String password)
+    {
+      
+        if(repository.findById(username).isPresent()) {
+            
+            Organizer x = repository.findById(username).get();
+
+            if(x.getPassword().equals(password))
+            return "{\"validCredential\" : \"true\"}";
+            else 
+            return "{\"validCredential\" : \"false\"}";
+
+        }
+        else 
+        return "{\"validCredential\" : \"false\"}";
+    }
+
 
 
     // returns all items
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @GetMapping("/organizers")
     List<Organizer> all()
     {
         return repository.findAll();
     }
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @PostMapping("/organizers")
     Organizer newOrganizer(@RequestBody Organizer newOrganizer)
     {
@@ -59,14 +124,14 @@ public class OrganizerController {
 
 
     //returning single item
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @GetMapping("/organizers/{id}")
     Organizer one(@PathVariable String id)
     {
         return repository.findById(id).orElseThrow(()-> new OrganizerNotFoundException(id));
     }
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @PutMapping("/organizers/{id}")
     Organizer replaceOrganizer(@RequestBody Organizer newOrganizer , @PathVariable String id)
     {
@@ -85,7 +150,7 @@ public class OrganizerController {
     }
 
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")    
+    @CrossOrigin    
 @DeleteMapping("/organizers/{id}")
 void deleteOrganizer(@PathVariable String id)
 {

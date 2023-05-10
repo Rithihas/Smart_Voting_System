@@ -16,7 +16,7 @@ from flask_cors import CORS # For security reasons, browsers restrict cross-orig
 #this allows us to perform cross origin requests.
 
 app = Flask(__name__) #initializing instance of Flask object.
-cors = CORS(app) # I dont know what this is doing 
+cors = CORS(app) # for cross origin
 
 @app.route('/validate', methods = ["POST"]) # url to call this method
 def validateFace():
@@ -27,7 +27,7 @@ def validateFace():
     
     #connecting to mongo DB database  
     # mongodb+srv://rithihas:votingsmart@smartvoting.xgicig5.mongodb.net/?retryWrites=true&w=majority      
-    client = MongoClient("mongodb://localhost/") #connecting to local mongoDB database
+    client = MongoClient("mongodb://127.0.0.1:27017/") #connecting to local mongoDB database
  
     dbname = client["SmartVote"] 
 
@@ -37,9 +37,14 @@ def validateFace():
         cname = dbname["Voters"] #getting required collection
     # print(data)
     
+    
+    
+
     retrieved = cname.find_one({"_id" : data[0]["user"]}) #retrieving record from collection
-     
-    decode = base64.b64decode(retrieved['photo'])  # decoding base64 string retrieved from database
+
+    
+
+    decode = base64.b64decode(retrieved['PhotoString'])  # decoding base64 string retrieved from database
 
     # converting the decode object into numpy array (deepface is compatible with numpy arrays)
     image = Image.open(io.BytesIO(decode))
@@ -54,12 +59,14 @@ def validateFace():
       
     # verifying using deepface (model used: VGG)
     result = DeepFace.verify(dbim,cim,enforce_detection=False)
+
+    client.close()
     
     #comparing the dissimilarity between the faces , and returning result
     if result['distance'] < 0.32:
-        return {"fresult" : "true"}
+        return {"fresult" : "true" , "distance" : result['distance']}
     else:
-        return {"fresult" : "false"}
+        return {"fresult" : "false", "distance" : result['distance']}
     
 
 

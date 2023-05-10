@@ -1,7 +1,9 @@
 package test.mongo.mongoconnect;
 
+import java.security.SecureRandom;
 import java.util.List;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +24,45 @@ public class VoterController {
         this.repository = repository;
     }
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
+    @GetMapping("/voters/generatetoken/{username}")
+     String generateToken(@PathVariable String username)
+    {
+        Voter x = repository.findById(username).get();
+
+        String plainPassword = x.getPassword();
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+        String encodedPassword = bCryptPasswordEncoder.encode(plainPassword);
+
+        
+
+        return "{\"sessionID\" : "+"\""+encodedPassword+"\""+" }";
+       
+
+    }
+
+    @CrossOrigin
+    @PostMapping("/voters/validatetoken/{username}")
+     String validateToken(@RequestBody Token token,@PathVariable String username)
+    {
+        
+
+        String plainPassword = repository.findById(username).get().getPassword();
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+     
+
+        if(bCryptPasswordEncoder.matches(plainPassword,token.getSessionID()))
+        return "{\"authorized\" : \"true\"}";
+        else 
+        return "{\"authorized\" : \"false\"}";
+       
+
+    }
+
+
+    @CrossOrigin
     @GetMapping("/voters/verifyuser/{username}")
      String verifyUser(@PathVariable String username)
     {
@@ -38,16 +78,39 @@ public class VoterController {
         return "{\"UserPresent\" : \"false\"}";
     }
 
+    @CrossOrigin
+    @GetMapping("/voters/validateLogin/{username}/{password}")
+     String validateLogin(@PathVariable String username , @PathVariable String password)
+    {
+
+        System.out.println(username+" "+password);
+
+        if(repository.findById(username).isPresent()) {
+            
+            Voter x = repository.findById(username).get();
+
+            
+
+            if(x.getPassword().equals(password))
+            return "{\"validCredential\" : \"true\"}";
+            else 
+            return "{\"validCredential\" : \"false\"}";
+
+        }
+        else 
+        return "{\"validCredential\" : \"false\"}";
+    }
+
 
     // returns all items
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @GetMapping("/voters")
     List<Voter> all()
     {
         return repository.findAll();
     }
 
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @PostMapping("/voters")
     Voter newVoter(@RequestBody Voter newVoter)
     {
@@ -56,14 +119,14 @@ public class VoterController {
 
 
     //returning single item
-    @CrossOrigin(origins = "http://127.0.0.1:5500/")
+    @CrossOrigin
     @GetMapping("/voters/{id}")
     Voter one(@PathVariable String id)
     {
         return repository.findById(id).orElseThrow(()-> new VoterNotFoundException(id));
     }
 
-@CrossOrigin(origins = "http://127.0.0.1:5500/")
+@CrossOrigin
    @PutMapping("/voters/{id}")
    Voter replaceVoter(@RequestBody Voter newVoter , @PathVariable String id)
    {
@@ -81,7 +144,7 @@ public class VoterController {
        });
    }
 
-@CrossOrigin(origins = "http://127.0.0.1:5500/")
+@CrossOrigin
 @DeleteMapping("/voters/{id}")
 void deleteVoter(@PathVariable String id)
 {
