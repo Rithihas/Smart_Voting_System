@@ -1,0 +1,151 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    
+    <!-- javascript file link -->
+    <script src="jsdriverscript.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <!-- basic css style sheet link -->
+    <link href="loginstyle.css" rel="stylesheet">
+
+</head>
+<body>
+
+    
+
+    <!-- driver code for login -->
+   <!-- <div class="details" id="det">-->
+     <!--   username:<input type = "text" name = "user" id="username">
+        password:<input type = "password" name = "pass" id="password">-->
+        <!-- this button is for starting the video stream -->
+       <!-- <button id="cap" onclick="onCap()">capture</button>
+      
+    </div>-->
+    
+	<div class="container">
+		
+		<div class="login-content" id="det">
+			<div class="form">
+                <div class="button-box">
+                    <div id="btn"></div>
+                    <button class="toggle" onclick="voterLogin()">voter </button>
+					<button class="toggle" onclick="organiserLogin()">organiser</button>
+                </div>
+				
+				<img src="profile.svg" style="padding-top: 40px;">
+                <div id="voter">
+				<h2 class="title">voter</h2>
+                <div>
+           		<div class="input-div one">
+           		   <div class="i">
+           		   		<i class="fas fa-user"></i>
+           		   </div>
+           		   <div class="div">
+           		   		<h5>Username</h5>
+           		   		<input type="text" id="vusername" class="input">
+           		   </div>
+           		</div>
+           		<div class="input-div pass">
+           		   <div class="i"> 
+           		    	<i class="fas fa-lock"></i>
+           		   </div>
+           		   <div class="div">
+           		    	<h5>Password</h5>
+           		    	<input type="password" id="vpassword" class="input">
+            	   </div>
+            	</div>
+            	<a href="#">Forgot Password?</a>
+            	<button id="cap" class="btn" onclick="verifyLogin()">capture</button>
+                </div>
+                </div>
+                <div id="organiser">
+                    <h2 class="title">organiser</h2>
+                    <div>
+                       <div class="input-div one">
+                          <div class="i">
+                                  <i class="fas fa-user"></i>
+                          </div>
+                          <div class="div">
+                                  <h5>Username</h5>
+                                  <input type="text" id="ousername" class="input">
+                          </div>
+                       </div>
+                       <div class="input-div pass">
+                          <div class="i"> 
+                               <i class="fas fa-lock"></i>
+                          </div>
+                          <div class="div">
+                               <h5>Password</h5>
+                               <input type="password" id="opassword" class="input">
+                       </div>
+                    </div>
+                    <a href="#">Forgot Password?</a>
+                    <button id="cap" class="btn" onclick="verifyLogin()">capture</button>
+                   
+				</div>
+                </div>
+                
+            </div><!--form-->
+        
+        </div><!--login-content-->
+    
+   
+   
+    <script type="text/javascript" src="focus.js"></script>
+
+        <!-- container for face recognition utilities -->
+        <div class = "facerecog" id="facerec">
+
+    <!-- container for streaming video captured through the camera     -->
+                <div class="video-wrap" id="vid" style="display: none;">
+                    <video id="video">video stream not available.</video>
+                    <!-- this button is for capturing our photo from the video to the canvas -->
+                    <button id="snap" class="btn1" onclick="takePicture()">capture</button>
+                </div>
+
+        
+    
+    <!-- container for capturing and displaying photo taken from the video stream -->
+                <div class="canvas-wrap" id="can" style="display: none;">
+                    <canvas id="canvas" ></canvas>
+                    <div class="buttons">
+                        <!-- this button is for taking the photo again -->
+                    <input type="button" class="btn" value="retake" onclick="verifyLogin()" required>
+                    <!-- this button is for sending the taken photo for validation  -->
+                 <input type="button"class="btn" value="confirm" onclick="validatePhoto()" required>
+                    <!-- test button for storing in database -->
+                    <!--<input type="button" value="store in database" onclick="storeDB()">-->
+                    </div>
+                    <!-- for displaying output during development -->
+                    <p id="inform"></p>
+
+                    <!-- hidden tag used for storing the base64 string of our image -->
+                    <p id="base64encoded" hidden></p>
+                </div>
+
+</div>
+
+</div>
+
+<!-- <script>
+    var x=document.getElementById("voter");
+    var y=document.getElementById("organiser");
+    var z=document.getElementById("btn");
+   function voterLogin(){
+    y.style.display='none';
+    x.style.display="inherit";
+    z.style.left="0px";
+   }
+   function organiserLogin(){
+    x.style.display="none";
+    y.style.display="inherit";
+    z.style.left="45%";
+   }
+
+</script> -->
+</body>
+</html>
