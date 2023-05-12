@@ -21,9 +21,13 @@ export default function Home(){
          <p className="title"> SMART VOTE</p>
          <p className="subtitle">Seemless and secure platform for online voting</p>
          <div className="button">
+<<<<<<< HEAD
          <button className="btn" onClick={()=>{
             window.location.href='reg.html'
          }}>Get started</button>
+=======
+         <button className="btn">Get started</button>
+>>>>>>> 9f390d7d6a4270df8a753e9258d7c8cd68a65bf1
          <h6>IT'S FREE</h6>
          </div>
       </div>
