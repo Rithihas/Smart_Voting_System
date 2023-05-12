@@ -1,11 +1,12 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Voter;
 
 import java.security.SecureRandom;
-
 import java.util.List;
+import java.util.Random;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,24 +17,61 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import test.mongo.mongoconnect.EmailSenderService;
+
 
 @RestController
-public class OrganizerController {
+public class VoterController {
 
-
+    @Autowired
+	private EmailSenderService  senderService;
     
-    private final OrganizerRepository repository;
+    private final VoterRepository repository;
+
+    private String storedotp;
                                                        
-    OrganizerController(OrganizerRepository repository)
+    VoterController(VoterRepository repository)
     {
         this.repository = repository;
     }
 
     @CrossOrigin
-    @GetMapping("/organizers/generatetoken/{username}")
+    @GetMapping("/voters/requestotp/{email}")
+    public String sendMail(@PathVariable String email,Model model){
+
+        Random random = new Random();
+        Integer otp = random.nextInt(10000, 99999);
+
+        
+        
+		senderService.sendEmail(email, "registration OTP", "your OTP for registration is: "+otp);
+
+        storedotp = Integer.toString(otp);
+
+        return "{\"OtpSent\" : \"true\"}";
+
+      
+	}
+
+    @CrossOrigin
+    @GetMapping("/voters/verifyotp/{votp}")
+    public String verifyOtp(@PathVariable String votp){
+
+        if(votp.equals(storedotp))
+        {
+            return "{\"VerifiedOtp\" : \"true\"}";
+        }
+        else 
+        return "{\"VerifiedOtp\" : \"false\"}";
+
+      
+	}
+
+    @CrossOrigin
+    @GetMapping("/voters/generatetoken/{username}")
      String generateToken(@PathVariable String username)
     {
-        Organizer x = repository.findById(username).get();
+        Voter x = repository.findById(username).get();
 
         String plainPassword = x.getPassword();
 
@@ -48,7 +86,7 @@ public class OrganizerController {
     }
 
     @CrossOrigin
-    @PostMapping("/organizers/validatetoken/{username}")
+    @PostMapping("/voters/validatetoken/{username}")
      String validateToken(@RequestBody Token token,@PathVariable String username)
     {
         
@@ -67,11 +105,13 @@ public class OrganizerController {
     }
 
 
-
     @CrossOrigin
-    @GetMapping("/organizers/verifyuser/{username}")
+    @GetMapping("/voters/verifyuser/{username}")
      String verifyUser(@PathVariable String username)
     {
+        
+        System.out.println(username);
+
         if(repository.findById(username).isPresent()) {
          System.out.println(username);
             return "{\"UserPresent\" : \"true\"}";
@@ -82,13 +122,17 @@ public class OrganizerController {
     }
 
     @CrossOrigin
-    @GetMapping("/organizers/validateLogin/{username}/{password}")
+    @GetMapping("/voters/validateLogin/{username}/{password}")
      String validateLogin(@PathVariable String username , @PathVariable String password)
     {
-      
+
+        System.out.println(username+" "+password);
+
         if(repository.findById(username).isPresent()) {
             
-            Organizer x = repository.findById(username).get();
+            Voter x = repository.findById(username).get();
+
+            
 
             if(x.getPassword().equals(password))
             return "{\"validCredential\" : \"true\"}";
@@ -101,60 +145,53 @@ public class OrganizerController {
     }
 
 
-
     // returns all items
     @CrossOrigin
-    @GetMapping("/organizers")
-    List<Organizer> all()
+    @GetMapping("/voters")
+    List<Voter> all()
     {
         return repository.findAll();
     }
 
     @CrossOrigin
-    @PostMapping("/organizers")
-    Organizer newOrganizer(@RequestBody Organizer newOrganizer)
+    @PostMapping("/voters")
+    Voter newVoter(@RequestBody Voter newVoter)
     {
-        if(repository.findById(newOrganizer.getUsername()).isPresent())
-        {
-            return null;
-        }
-        else 
-        return repository.save(newOrganizer);
+        return repository.save(newVoter);
     }
 
 
     //returning single item
     @CrossOrigin
-    @GetMapping("/organizers/{id}")
-    Organizer one(@PathVariable String id)
+    @GetMapping("/voters/{id}")
+    Voter one(@PathVariable String id)
     {
-        return repository.findById(id).orElseThrow(()-> new OrganizerNotFoundException(id));
+        return repository.findById(id).orElseThrow(()-> new VoterNotFoundException(id));
     }
 
-    @CrossOrigin
-    @PutMapping("/organizers/{id}")
-    Organizer replaceOrganizer(@RequestBody Organizer newOrganizer , @PathVariable String id)
-    {
-        return repository.findById(id)
-        .map(organizer -> {
-          organizer.setUsername(newOrganizer.getUsername());
-          organizer.setPassword(newOrganizer.getPassword());
-          organizer.setPhotoString(newOrganizer.getPhotoString());
-          return repository.save(organizer);
-        })
-        .orElseGet(() -> {
-            
-            newOrganizer.setUsername(id);
-          return repository.save(newOrganizer);
-        });
-    }
+@CrossOrigin
+   @PutMapping("/voters/{id}")
+   Voter replaceVoter(@RequestBody Voter newVoter , @PathVariable String id)
+   {
+       return repository.findById(id)
+       .map(voter -> {
+         voter.setUsername(newVoter.getUsername());
+         voter.setPassword(newVoter.getPassword());
+         voter.setPhotoString(newVoter.getPhotoString());
+         return repository.save(voter);
+       })
+       .orElseGet(() -> {
+           
+           newVoter.setUsername(id);
+         return repository.save(newVoter);
+       });
+   }
 
-
-    @CrossOrigin    
-@DeleteMapping("/organizers/{id}")
-void deleteOrganizer(@PathVariable String id)
+@CrossOrigin
+@DeleteMapping("/voters/{id}")
+void deleteVoter(@PathVariable String id)
 {
-    repository.deleteById(id);
+   repository.deleteById(id);
 }
 
 

@@ -1,4 +1,5 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Organizer;
+
 
 
 public class Token {

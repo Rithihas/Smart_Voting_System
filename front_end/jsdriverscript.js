@@ -343,7 +343,7 @@ else {
  if(jsonResponse.UserPresent == "true")
  alert("Username already taken.");
  else 
- onCap();
+ requestOtp();
 
 
 
@@ -380,7 +380,7 @@ else
  if(jsonResponse.UserPresent == "true")
  alert("Username already taken.");
  else 
- onCap();
+ requestOtp();
 
 
 
@@ -393,6 +393,173 @@ else
 }
 
 }
+
+}
+
+function requestOtp()
+{
+  var name = document.getElementById(prefix+'username').value;
+  if(prefix == 'o') {
+    fetch("http://localhost:3128/organizers/requestotp/"+name,  // link to the server
+    {
+    method: 'GET',   // since we are sending an object
+    headers: {
+      // specifies that we are sending a json object.
+    'Accept': 'application/json'         // ensures that we recieve a json object.
+    }
+   
+   }).then(res=>{       //body specifies the object we are sending
+    if(res.ok){             // res.ok is true if response returned successfully
+   
+    return res.json()       // this value is returned to the next "then"
+    }
+    else{
+    alert("Something went wrong.")
+    }
+    }).then(jsonResponse=>{
+    
+    
+    if(jsonResponse.OtpSent == "false")
+    alert("check your email id.");
+    else 
+    {
+      document.getElementById('det').style.display = "none"; 
+      document.getElementById('otpcon').style.display = "block";
+    }
+   
+   
+   
+   
+    
+    } 
+    ).catch((err) => console.log("Internal server error. "+err));
+   
+   
+   }
+   
+   else
+   
+   {
+   
+     fetch("http://localhost:3128/voters/requestotp/"+name,  // link to the server
+    {
+    method: 'GET',   // since we are sending an object
+    headers: {
+      // specifies that we are sending a json object.
+    'Accept': 'application/json'         // ensures that we recieve a json object.
+    }
+   
+   }).then(res=>{       //body specifies the object we are sending
+    if(res.ok){             // res.ok is true if response returned successfully
+    return res.json()       // this value is returned to the next "then"
+    }
+    else{
+    alert("Something went wrong.")
+    }
+    }).then(jsonResponse=>{
+    
+    
+    if(jsonResponse.OtpSent == "false")
+    alert("check your email id.");
+    else 
+    {
+      document.getElementById('det').style.display = "none"; 
+      document.getElementById('otpcon').style.display = "block";
+
+    }
+   
+   
+   
+   
+    
+    } 
+    ).catch((err) => console.log("Internal server error. "+err));
+   
+   
+   }
+}
+
+function verifyOtp()
+{
+  var otp = document.getElementById("otp").value;
+
+  if(prefix == 'o') {
+    fetch("http://localhost:3128/organizers/verifyotp/"+otp,  // link to the server
+    {
+    method: 'GET',   // since we are sending an object
+    headers: {
+      // specifies that we are sending a json object.
+    'Accept': 'application/json'         // ensures that we recieve a json object.
+    }
+   
+   }).then(res=>{       //body specifies the object we are sending
+    if(res.ok){             // res.ok is true if response returned successfully
+   
+    return res.json()       // this value is returned to the next "then"
+    }
+    else{
+    alert("Something went wrong.")
+    }
+    }).then(jsonResponse=>{
+    
+    
+    if(jsonResponse.VerifiedOtp == "false")
+    alert("wrong OTP.");
+    else 
+    {
+      onCap();
+    }
+   
+   
+   
+   
+    
+    } 
+    ).catch((err) => console.log("Internal server error. "+err));
+   
+   
+   }
+   
+   else
+   
+   {
+   
+     fetch("http://localhost:3128/voters/verifyotp/"+otp,  // link to the server
+    {
+    method: 'GET',   // since we are sending an object
+    headers: {
+      // specifies that we are sending a json object.
+    'Accept': 'application/json'         // ensures that we recieve a json object.
+    }
+   
+   }).then(res=>{       //body specifies the object we are sending
+    if(res.ok){             // res.ok is true if response returned successfully
+    return res.json()       // this value is returned to the next "then"
+    }
+    else{
+    alert("Something went wrong.")
+    }
+    }).then(jsonResponse=>{
+    
+    
+    if(jsonResponse.VerifiedOtp == "false")
+    alert("wrong OTP.");
+    else 
+    {
+      onCap();
+
+    }
+   
+   
+   
+   
+    
+    } 
+    ).catch((err) => console.log("Internal server error. "+err));
+   
+   
+   }
+
 
 }
 
@@ -412,6 +579,7 @@ else{
    
    document.getElementById('det').style.display = "none"; 
    document.getElementById('can').style.display = "none";
+   document.getElementById('otpcon').style.display = "none";
    document.getElementById('vid').style.display = "flex";
 
 let streaming = false;

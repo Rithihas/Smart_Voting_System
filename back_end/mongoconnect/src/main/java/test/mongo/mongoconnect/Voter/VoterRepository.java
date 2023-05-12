@@ -1,4 +1,4 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Voter;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

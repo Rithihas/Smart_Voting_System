@@ -1,4 +1,4 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Organizer;
 
 class OrganizerNotFoundException extends RuntimeException {
 

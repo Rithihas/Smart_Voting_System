@@ -1,4 +1,4 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Organizer;
 
 import java.util.Objects;
 

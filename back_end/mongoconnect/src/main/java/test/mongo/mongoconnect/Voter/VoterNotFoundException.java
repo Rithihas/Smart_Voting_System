@@ -1,4 +1,4 @@
-package test.mongo.mongoconnect;
+package test.mongo.mongoconnect.Voter;
 
 class VoterNotFoundException extends RuntimeException {
 
