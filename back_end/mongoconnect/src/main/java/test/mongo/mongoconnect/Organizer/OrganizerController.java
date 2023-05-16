@@ -11,13 +11,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import test.mongo.mongoconnect.EmailSenderService;
 
@@ -26,7 +24,6 @@ import test.mongo.mongoconnect.EmailSenderService;
 
 
 @RestController
-@SessionAttributes("otp")
 public class OrganizerController {
 
     @Autowired
@@ -35,6 +32,8 @@ public class OrganizerController {
 
     
     private final OrganizerRepository repository;
+
+    private String storedotp;
                                                        
     OrganizerController(OrganizerRepository repository)
     {
@@ -48,7 +47,7 @@ public class OrganizerController {
         Random random = new Random();
         Integer otp = random.nextInt(10000, 99999);
 
-        model.addAttribute("otp", Integer.toString(otp));
+       storedotp = Integer.toString(otp);
         
 		senderService.sendEmail(email, "registration OTP", "your OTP for registration is: "+otp);
 
@@ -59,9 +58,9 @@ public class OrganizerController {
 
     @CrossOrigin
     @GetMapping("/organizers/verifyotp/{votp}")
-    public String verifyOtp(@PathVariable String votp,@ModelAttribute("otp") String otp){
+    public String verifyOtp(@PathVariable String votp){
 
-        if(votp.equals(otp))
+        if(votp.equals(storedotp))
         {
             return "{\"VerifiedOtp\" : \"true\"}";
         }
@@ -95,15 +94,21 @@ public class OrganizerController {
     {
         
 
-        String plainPassword = repository.findById(username).get().getPassword();
-
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
-     
-
-        if(bCryptPasswordEncoder.matches(plainPassword,token.getSessionID()))
-        return "{\"authorized\" : \"true\"}";
-        else 
-        return "{\"authorized\" : \"false\"}";
+        if(repository.findById(username).isPresent()) {
+            String plainPassword = repository.findById(username).get().getPassword();
+    
+            System.out.println(token.getSessionID());
+    
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+         
+    
+            if(bCryptPasswordEncoder.matches(plainPassword,token.getSessionID()))
+            return "{\"authorized\" : \"true\"}";
+            else 
+            return "{\"authorized\" : \"false\"}";
+            }
+            else 
+            return "{\"authorized\" : \"false\"}";
        
 
     }
@@ -197,6 +202,13 @@ public class OrganizerController {
 void deleteOrganizer(@PathVariable String id)
 {
     repository.deleteById(id);
+}
+
+@CrossOrigin
+@GetMapping("/organizers/getdomain/{id}")
+String getDomain(@PathVariable String id)
+{
+    return repository.findById(id).get().getDomainName();
 }
 
 

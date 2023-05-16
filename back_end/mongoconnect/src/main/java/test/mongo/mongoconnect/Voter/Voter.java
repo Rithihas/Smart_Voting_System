@@ -2,6 +2,9 @@ package test.mongo.mongoconnect.Voter;
 
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +18,8 @@ public class Voter {
 
 	  private String PhotoString;
 
+	  private List<String> eventsVoted;
+
 	  public Voter(){}
 
 	  public Voter(String id, String password, String PhotoString){
@@ -23,6 +28,8 @@ public class Voter {
 	    this.password = password;
 
 	    this.PhotoString = PhotoString;
+
+		this.eventsVoted = new ArrayList<String>();
 
 	  }
 
@@ -43,6 +50,11 @@ public class Voter {
 	    return this.PhotoString;
 	  }
 
+	  public List<String> getEventsVoted()
+	  {
+		return this.eventsVoted;
+	  }
+
 	  public void setUsername(String username)
 	  {
 	    this.id = username;
@@ -57,6 +69,11 @@ public class Voter {
 	  public void setPhotoString(String PhotoString)
 	  {
 	    this.PhotoString = PhotoString;
+	  }
+
+	  public void setEventsVoted(List<String> eventsVoted)
+	  {
+		this.eventsVoted = eventsVoted;
 	  }
 
 

@@ -15,16 +15,20 @@ public class Organizer {
   private String password;
 
 
+  private String DomainName; 
+
   private String PhotoString;
 
   public Organizer(){}
 
-  public Organizer(String id, String password, String PhotoString){
+  public Organizer(String id, String password, String PhotoString,String DomainName){
     
     this.id = id;
     this.password = password;
 
     this.PhotoString = PhotoString;
+
+    this.DomainName = DomainName;
 
   }
 
@@ -45,6 +49,11 @@ public class Organizer {
     return this.PhotoString;
   }
 
+  public String getDomainName()
+  {
+    return this.DomainName;
+  }
+
   public void setUsername(String username)
   {
     this.id = username;
@@ -61,6 +70,11 @@ public class Organizer {
     this.PhotoString = PhotoString;
   }
 
+  public void setDomainName(String DomainName)
+  {
+    this.DomainName = DomainName;
+  }
+
 
 
 
@@ -68,8 +82,8 @@ public class Organizer {
   public String toString() 
   {
     return String.format(
-        "Organizer[username=%s, password='%s', PhotoString='%s']",
-        id,password,PhotoString);
+        "Organizer[username=%s, password='%s', PhotoString='%s',DomainName='%s']",
+        id,password,PhotoString,DomainName);
   }
 
 

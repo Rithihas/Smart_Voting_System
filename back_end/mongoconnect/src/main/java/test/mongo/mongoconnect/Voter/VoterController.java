@@ -2,6 +2,7 @@ package test.mongo.mongoconnect.Voter;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,8 +91,10 @@ public class VoterController {
      String validateToken(@RequestBody Token token,@PathVariable String username)
     {
         
-
+        if(repository.findById(username).isPresent()) {
         String plainPassword = repository.findById(username).get().getPassword();
+
+        System.out.println(token.getSessionID());
 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
      
@@ -100,7 +103,9 @@ public class VoterController {
         return "{\"authorized\" : \"true\"}";
         else 
         return "{\"authorized\" : \"false\"}";
-       
+        }
+        else 
+        return "{\"authorized\" : \"false\"}";
 
     }
 
@@ -147,11 +152,21 @@ public class VoterController {
 
     // returns all items
     @CrossOrigin
-    @GetMapping("/voters")
-    List<Voter> all()
+    @GetMapping("/votecheck/{id}/{eventName}")
+    String voteCheck(@PathVariable String id, @PathVariable String eventName)
     {
-        return repository.findAll();
+        Voter x = repository.findById(id).get();
+
+        List<String> eventlist = x.getEventsVoted();
+
+        if(eventlist.contains(eventName))
+        return "{\"votedAlready\" : \"true\"}";
+        else 
+        return "{\"votedAlready\" : \"false\"}"; 
+       
     }
+
+
 
     @CrossOrigin
     @PostMapping("/voters")
@@ -170,22 +185,27 @@ public class VoterController {
     }
 
 @CrossOrigin
-   @PutMapping("/voters/{id}")
-   Voter replaceVoter(@RequestBody Voter newVoter , @PathVariable String id)
+   @PutMapping("/addevent/{id}/{eventName}")
+   String addEvent(@PathVariable String eventName , @PathVariable String id)
    {
-       return repository.findById(id)
-       .map(voter -> {
-         voter.setUsername(newVoter.getUsername());
-         voter.setPassword(newVoter.getPassword());
-         voter.setPhotoString(newVoter.getPhotoString());
-         return repository.save(voter);
-       })
-       .orElseGet(() -> {
-           
-           newVoter.setUsername(id);
-         return repository.save(newVoter);
-       });
+       Optional<Voter> optionalVoter = repository.findById(id);
+
+       if(optionalVoter.isPresent())
+       {
+        Voter x = optionalVoter.get();
+        List<String> events = x.getEventsVoted();
+        events.add(eventName);
+        x.setEventsVoted(events);
+        repository.save(x);
+        return "{\"eventVoted\" : \"true\"}"; 
+       }
+       else 
+       {
+        return "{\"eventVoted\" : \"false\"}";
+       }
    }
+
+
 
 @CrossOrigin
 @DeleteMapping("/voters/{id}")
